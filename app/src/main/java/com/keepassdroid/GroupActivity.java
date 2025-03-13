@@ -48,6 +48,8 @@ import com.keepassdroid.database.PwGroupV3;
 import com.keepassdroid.database.PwGroupV4;
 import com.keepassdroid.database.edit.AddGroup;
 import com.keepassdroid.dialog.ReadOnlyDialog;
+import com.keepassdroid.sync.TestActivity;
+import com.keepassdroid.sync.views.MainActivity;
 import com.keepassdroid.view.ClickView;
 import com.keepassdroid.view.GroupAddEntryView;
 import com.keepassdroid.view.GroupRootView;
@@ -182,6 +184,15 @@ public abstract class GroupActivity extends GroupBaseActivity {
 		if (isRoot) {
 			showWarnings();
 		}
+
+		Button synchronizeBtn = findViewById(R.id.synchronize);
+		synchronizeBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View view) {
+				Intent syncIntent = new Intent(GroupActivity.this, MainActivity.class);
+				startActivity(syncIntent);
+			}
+		});
 	}
 
 	@Override
