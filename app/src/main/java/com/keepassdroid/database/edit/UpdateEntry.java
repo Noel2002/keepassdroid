@@ -30,6 +30,15 @@ public class UpdateEntry extends RunnableOnFinish {
 	private PwEntry mOldE;
 	private PwEntry mNewE;
 	private Context ctx;
+
+	/**
+	 * SYNCHRONIZER
+	 * This field is for synchronization purpose
+	 * It determines whether the last modification time should be set to Date.now() upon update
+	 * Default: True
+	 * The default value is set to true because that is the native behaviour of the function
+	 */
+	private boolean shouldUpdateModificationTime = true;
 	
 	public UpdateEntry(Context ctx, Database db, PwEntry oldE, PwEntry newE, OnFinish finish) {
 		super(finish);
@@ -46,11 +55,37 @@ public class UpdateEntry extends RunnableOnFinish {
 		mFinish = new AfterUpdate(backup, finish);
 	}
 
+	/**
+	 * SYNCHRONIZER
+	 * @param ctx
+	 * @param db
+	 * @param oldE
+	 * @param newE
+	 * @param finish
+	 * @param shouldUpdateModificationTime - Whether the last modification time should be updated automatically or not
+	 * This constructor is made to support synchronization feature where we need to silence the auto update of last modification time
+	 */
+	public UpdateEntry(Context ctx, Database db, PwEntry oldE, PwEntry newE, OnFinish finish, boolean shouldUpdateModificationTime) {
+		super(finish);
+
+		mDb = db;
+		mOldE = oldE;
+		mNewE = newE;
+		this.ctx = ctx;
+		this.shouldUpdateModificationTime = shouldUpdateModificationTime;
+
+		// Keep backup of original values in case save fails
+		PwEntry backup;
+		backup = (PwEntry) mOldE.clone();
+
+		mFinish = new AfterUpdate(backup, finish);
+	}
+
 	@Override
 	public void run() {
 		// Update entry with new values
 		mOldE.assign(mNewE);
-		mOldE.touch(true, true);
+		mOldE.touch(this.shouldUpdateModificationTime, true);
 		
 		
 		// Commit to disk

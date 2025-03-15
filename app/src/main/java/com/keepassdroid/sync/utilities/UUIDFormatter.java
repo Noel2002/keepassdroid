@@ -9,6 +9,6 @@ public class UUIDFormatter {
         return uuid.replaceFirst(
                 "(\\p{XDigit}{8})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}{4})(\\p{XDigit}+)",
                 "$1-$2-$3-$4-$5"
-        );
+        ).toLowerCase();
     }
 }

@@ -52,6 +52,7 @@ public class Merger {
 
     private void merge(PwEntry current, CredentialEntry incoming){
         if(incoming.lastModified <= UnixTimeConverter.DateTimeToUnixSeconds(current.getLastModificationTime())){
+            System.out.println("NOT MERGEABLE");
             return;
         }
         PwEntry newEntry = current.clone(true);
@@ -63,7 +64,7 @@ public class Merger {
 
 
         OnFinish onUpdateFinish = new AfterSave();
-        RunnableOnFinish task = new UpdateEntry(this.context, this.database, current, newEntry, onUpdateFinish);
+        RunnableOnFinish task = new UpdateEntry(this.context, this.database, current, newEntry, onUpdateFinish, false);
 
         task.run();
     }
@@ -84,6 +85,8 @@ public class Merger {
         entry.setUsername(incoming.username, this.pwDatabase);
         entry.setPassword(incoming.password, this.pwDatabase);
         entry.setUrl(incoming.url, this.pwDatabase);
+        entry.setLastModificationTime(UnixTimeConverter.UnixSecondsToDateTime(incoming.lastModified));
+
 
         RunnableOnFinish task= AddEntry.getInstance(this.context, this.database, entry, onAddFinish);
 
@@ -92,9 +95,11 @@ public class Merger {
 
     private PwEntry findMatch(CredentialEntry incoming){
         for(PwEntry entry: this.pwGroup.childEntries){
-            if(entry.getUsername().equals(incoming.username) &&
-                    (entry.getTitle().equals(incoming.title) || entry.getUrl().equals(incoming.url))
-            ){
+            String incomingUUID = UUIDFormatter.toStandardFormat(incoming.uuid);
+            String entryUUID = entry.getUUID().toString();
+
+            System.out.println(incomingUUID + "=" + entryUUID);
+            if(incomingUUID.equals(entryUUID)){
                 return entry;
             }
         }
