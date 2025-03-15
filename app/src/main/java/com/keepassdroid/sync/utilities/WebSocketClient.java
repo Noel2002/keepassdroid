@@ -149,7 +149,7 @@ public class WebSocketClient {
                             manager.addCredentialChange(change);
                         }
 
-                        manager.setStateText(receivedModifiedEntries.length + " entries merged");
+                        manager.setStateText(changes.size() + " entries merged");
                     } catch(Exception e){
                         System.out.println(e.getLocalizedMessage());
                     }

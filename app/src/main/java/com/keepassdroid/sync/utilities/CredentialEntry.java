@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.Random;
 
 public class CredentialEntry {
+    public String uuid;
     public String username;
     public String password;
     public String url;
@@ -25,6 +26,7 @@ public class CredentialEntry {
     public CredentialEntry(){}
 
     public CredentialEntry(PwEntry entry){
+        this.uuid = UUIDFormatter.fromStandardFormat(entry.getUUID().toString());
         this.username = entry.getUsername();
         this.password = entry.getPassword();
         this.url = entry.getUrl();
@@ -32,34 +34,34 @@ public class CredentialEntry {
         this.lastModified = UnixTimeConverter.DateTimeToUnixSeconds(entry.getLastModificationTime());
     }
 
-    static public CredentialEntry[] getSampleEntries(){
-        Random random = new Random();
-        int randomNumber = random.nextInt(101);
-        CredentialEntry[] sampleEntries = {
-                new CredentialEntry(
-                        "testusername" + randomNumber,
-                        "testpassword",
-                        "testUrl",
-                        "testTitle",
-                        new Date()
-                ),
-                new CredentialEntry(
-                        "testusername",
-                        "testpassword" + randomNumber,
-                        "testUrl",
-                        "testTitle",
-                        new Date()
-                ),
-                new CredentialEntry(
-                        "testusername",
-                        "testpassword",
-                        "testUrl" + randomNumber,
-                        "testTitle",
-                        new Date()
-                ),
-
-        };
-        return sampleEntries;
-    }
+//    static public CredentialEntry[] getSampleEntries(){
+//        Random random = new Random();
+//        int randomNumber = random.nextInt(101);
+//        CredentialEntry[] sampleEntries = {
+//                new CredentialEntry(
+//                        "testusername" + randomNumber,
+//                        "testpassword",
+//                        "testUrl",
+//                        "testTitle",
+//                        new Date()
+//                ),
+//                new CredentialEntry(
+//                        "testusername",
+//                        "testpassword" + randomNumber,
+//                        "testUrl",
+//                        "testTitle",
+//                        new Date()
+//                ),
+//                new CredentialEntry(
+//                        "testusername",
+//                        "testpassword",
+//                        "testUrl" + randomNumber,
+//                        "testTitle",
+//                        new Date()
+//                ),
+//
+//        };
+//        return sampleEntries;
+//    }
 
 }

@@ -21,6 +21,7 @@ import com.keepassdroid.sync.models.CredentialChange;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Merger {
     private Database database;
@@ -50,7 +51,7 @@ public class Merger {
 
 
     private void merge(PwEntry current, CredentialEntry incoming){
-        if(incoming.lastModified < UnixTimeConverter.DateTimeToUnixSeconds(current.getLastModificationTime())){
+        if(incoming.lastModified <= UnixTimeConverter.DateTimeToUnixSeconds(current.getLastModificationTime())){
             return;
         }
         PwEntry newEntry = current.clone(true);
@@ -58,6 +59,7 @@ public class Merger {
         newEntry.setUrl(incoming.url, this.pwDatabase);
         newEntry.setPassword(incoming.password, this.pwDatabase);
         newEntry.setUsername(incoming.username, this.pwDatabase);
+        newEntry.setLastModificationTime(UnixTimeConverter.UnixSecondsToDateTime(incoming.lastModified));
 
 
         OnFinish onUpdateFinish = new AfterSave();
@@ -74,6 +76,7 @@ public class Merger {
         else{
             entry = new PwEntryV3((PwGroupV3) this.pwGroup, true, true);
         }
+        entry.setUUID(UUID.fromString(UUIDFormatter.toStandardFormat(incoming.uuid)));
 
         OnFinish onAddFinish = new AfterSave();
 
@@ -107,6 +110,9 @@ public class Merger {
                 changes.add(new CredentialChange(incoming.title, incoming.username, "created"));
             }
             else{
+                if(incoming.lastModified <= UnixTimeConverter.DateTimeToUnixSeconds(entry.getLastModificationTime())){
+                    continue;
+                }
                 this.merge(entry, incoming);
                 changes.add(new CredentialChange(incoming.title, incoming.username, "modified"));
             }
